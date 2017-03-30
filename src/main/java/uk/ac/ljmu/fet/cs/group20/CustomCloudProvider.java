@@ -6,8 +6,11 @@ import hu.unimiskolc.iit.distsys.interfaces.CloudProvider;
 
 public class CustomCloudProvider implements CloudProvider{
 	
+	private IaaSService iaas;
+	
 	@Override
 	public double getPerTickQuote(ResourceConstraints rc) {
+		double basePrice = 0.000005;
 		
 		return 0.000002;
 	}
@@ -15,8 +18,14 @@ public class CustomCloudProvider implements CloudProvider{
 
 	@Override
 	public void setIaaSService(IaaSService iaas){
+		this.iaas = iaas;
+	}
+	
+	public void capacityChange(){
 		
 	}
-
-
+	
+	
+	
+	
 }
