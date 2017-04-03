@@ -20,6 +20,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	
 	private int vmCount=0;
 	private int pmCount=0;
+	private double totalPrice;
 	private double basePrice = 0.0002;
 	
 	@Override
