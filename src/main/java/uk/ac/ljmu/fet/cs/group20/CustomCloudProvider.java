@@ -18,28 +18,39 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private IaaSService customProvider;
 	private ResourceConstraints rc;
 	
+	private final double basePrice = 0.0005;
+	
 	private int vmCount=0;
 	private int pmCount=0;
+	
+	private double adjustedBasePrice = 0;
 	private double totalPrice;
-	private double basePrice = 0.0002;
+	private double profit=0;
 	
 	@Override
 	public double getPerTickQuote(ResourceConstraints rc) {
 		this.rc = rc;
 		calculateNumOfVMs();
 		
-		double coreNum = rc.getRequiredCPUs();
-		double coreClock = rc.getRequiredProcessingPower();
-		double totalPrice;
+		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
+		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
+		double totalPrice; //total price is what we are charging the customer.
 		
 		totalPrice = basePrice * coreNum * coreClock;
-		return getDiscountAvailable(vmCount) * totalPrice;
+		
+		//If we have a profit charge normal price but if we dont then charge customer 50% more.
+		if(this.profit>0){
+			totalPrice = basePrice * coreNum * coreClock;
+			return (getDiscountAvailable(vmCount) * totalPrice);
+		}else{
+			return (1.5 * getDiscountAvailable(vmCount) * totalPrice);
+		}
 	}
 	
-	
+	//Method for changing capacity change, will automatically replace lost VMs with new ones.
 	@Override
 	public void capacityChanged(ResourceConstraints newCapacity, List<PhysicalMachine> affectedCapacity){
-		
+	
 		final boolean newRegistration = customProvider.isRegisteredHost(affectedCapacity.get(0));
 		//If PM is lost, this will execute.
 		if(!newRegistration){
@@ -55,15 +66,21 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		
 	}
 	
-	public void calculateBasePrice(CostAnalyserandPricer costAnalyser){
-		if(costAnalyser.getCurrentBalance()>0){
-			
+	//Doesn't have a use yet.
+	public void calculateAdjustedBasePrice(CostAnalyserandPricer costAnalyser){
+		if(costAnalyser.getCurrentBalance()<=0){
+			this.adjustedBasePrice = 2 * this.basePrice;
 		}
+	}
+	
+	//Calculate total profit -> (Total earning - total cost). 
+	public void calculateProfit(CostAnalyserandPricer costAnalyser){
+		this.profit = costAnalyser.getTotalEarnings() - costAnalyser.getTotalCosts();
 	}
 	
 	//Method to calculate number of Physical Machine.
 	public void calculateNumOfPms(){
-		for(PhysicalMachine pm : customProvider.machines){
+		for(@SuppressWarnings("unused") PhysicalMachine pm : customProvider.machines){
 			pmCount++;
 		}
 	}
