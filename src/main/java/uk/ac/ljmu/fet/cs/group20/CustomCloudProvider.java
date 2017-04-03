@@ -64,7 +64,11 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 				throw new RuntimeException(e);
 			}
 		}
-		
+	}
+	
+	//Method to set cost analyser.
+	public void setCostAnalyser(CostAnalyserandPricer costAnalyser){
+		this.costAnalyser = costAnalyser;
 	}
 	
 	public void calculateAdjustedBasePrice(CostAnalyserandPricer costAnalyser){
@@ -119,5 +123,4 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		iaas.subscribeToCapacityChanges(this);
 		((IaaSForwarder) customProvider).setQuoteProvider(this);
 	}
-	
 }
