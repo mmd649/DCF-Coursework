@@ -10,6 +10,7 @@ import hu.mta.sztaki.lpds.cloud.simulator.iaas.VMManager.CapacityChangeEvent;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.constraints.ResourceConstraints;
 import hu.unimiskolc.iit.distsys.CostAnalyserandPricer;
 import hu.unimiskolc.iit.distsys.ExercisesBase;
+import hu.unimiskolc.iit.distsys.forwarders.IaaSForwarder;
 import hu.unimiskolc.iit.distsys.interfaces.CloudProvider;
 
 public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<PhysicalMachine>{
@@ -18,6 +19,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private ResourceConstraints rc;
 	
 	private int vmCount=0;
+	private int pmCount=0;
 	private double basePrice = 0.0002;
 	
 	@Override
@@ -58,6 +60,14 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		}
 	}
 	
+	//Method to calculate number of Physical Machine.
+	public void calculateNumOfPms(){
+		for(PhysicalMachine pm : customProvider.machines){
+			pmCount++;
+		}
+	}
+	
+	//Method to calculate number of Virtual Machines.
 	public void calculateNumOfVMs(){
 		for(PhysicalMachine pM: customProvider.machines){
 			this.vmCount += pM.numofCurrentVMs();
@@ -89,6 +99,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	public void setIaaSService(IaaSService iaas){
 		this.customProvider = iaas;
 		iaas.subscribeToCapacityChanges(this);
+		((IaaSForwarder) customProvider).setQuoteProvider(this);
 	}
 	
 }
