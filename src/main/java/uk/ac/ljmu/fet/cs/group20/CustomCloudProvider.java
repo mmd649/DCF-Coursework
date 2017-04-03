@@ -71,8 +71,9 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		this.costAnalyser = costAnalyser;
 	}
 	
+	//Will automatically adjust base price depending on how good/bad the priovider is doing.
 	public void calculateAdjustedBasePrice(CostAnalyserandPricer costAnalyser){
-		if(costAnalyser.getCurrentBalance()<=0){
+		if(this.profit<0){
 			this.adjustedBasePrice = 2 * this.basePrice;
 		}
 	}
