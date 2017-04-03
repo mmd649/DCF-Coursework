@@ -16,6 +16,7 @@ import hu.unimiskolc.iit.distsys.interfaces.CloudProvider;
 public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<PhysicalMachine>{
 	
 	private IaaSService customProvider;
+	private CostAnalyserandPricer costAnalyser;
 	private ResourceConstraints rc;
 	
 	private final double basePrice = 0.0005;
@@ -31,6 +32,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	public double getPerTickQuote(ResourceConstraints rc) {
 		this.rc = rc;
 		calculateNumOfVMs();
+		calculateProfit(costAnalyser);
 		
 		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
 		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
@@ -47,8 +49,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		}
 	}
 	
-	//Method for changing capacity change, will automatically replace lost VMs with new ones.
-	@Override
+	@Override //Method for changing capacity, will automatically replace lost VMs with new ones.
 	public void capacityChanged(ResourceConstraints newCapacity, List<PhysicalMachine> affectedCapacity){
 	
 		final boolean newRegistration = customProvider.isRegisteredHost(affectedCapacity.get(0));
@@ -66,7 +67,6 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		
 	}
 	
-	//Doesn't have a use yet.
 	public void calculateAdjustedBasePrice(CostAnalyserandPricer costAnalyser){
 		if(costAnalyser.getCurrentBalance()<=0){
 			this.adjustedBasePrice = 2 * this.basePrice;
