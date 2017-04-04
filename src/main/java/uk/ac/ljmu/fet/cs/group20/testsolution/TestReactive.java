@@ -43,8 +43,7 @@ public class TestReactive implements VMManager.CapacityChangeEvent<PhysicalMachi
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			
+			}			
 		};
 		
 	}

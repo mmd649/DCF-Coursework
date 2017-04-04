@@ -27,8 +27,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private int dualCoreVmNum = 0;
 	private int quadCoreVmNum = 0;
 	
-	private double adjustedBasePrice = 0;
-	private double totalPrice;
+	private double adjustedBasePrice = 0; //[Not in use at the moment]
 	private double profit=0;
 	
 	@Override
@@ -42,19 +41,6 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		double dualCoreVMPrice = basePrice * 1.5;
 		double quadCoreVMPrice = basePrice * 2;
 		double totalPrice; //total price is what we are charging the customer.
-		
-		//Loop to sort vms together. 3 groups which are -  single core VMs, dual core VMs and quadcore VMs 
-		for(@SuppressWarnings("unused") PhysicalMachine pM : customProvider.machines){
-			if(rc.getRequiredCPUs() == 1){
-				this.singleCoreVmNum++;
-			}
-			else if(rc.getRequiredCPUs() == 2 ){
-				this.dualCoreVmNum++;
-			}
-			else{
-				this.quadCoreVmNum++;//Although this is called quadcore, it also include Vms with more than 4 cores.
-			}
-		}
 		
 		totalPrice = (singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice);
 		
@@ -84,7 +70,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		this.costAnalyser = costAnalyser;
 	}
 	
-	//Will automatically adjust base price depending on how good/bad the priovider is doing.
+	//Will automatically adjust base price depending on how good/bad the priovider is doing. [Currently not in use]
 	public void calculateAdjustedBasePrice(CostAnalyserandPricer costAnalyser){
 		if(this.profit<0){
 			this.adjustedBasePrice = 2 * this.basePrice;
@@ -102,6 +88,17 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	public void calculateNumOfVMs(){
 		for(PhysicalMachine pM: customProvider.machines){
 			this.vmCount += pM.numofCurrentVMs();
+			
+			//Loop to sort vms together. 3 groups which are -  single core VMs, dual core VMs and quadcore VMs 
+			if(rc.getRequiredCPUs() == 1){
+				this.singleCoreVmNum++;
+			}
+			else if(rc.getRequiredCPUs() == 2 ){
+				this.dualCoreVmNum++;
+			}
+			else{
+				this.quadCoreVmNum++;//Although this is called quadcore, it also include Vms with more than 4 cores.
+			}
 		}
 	}
 	
