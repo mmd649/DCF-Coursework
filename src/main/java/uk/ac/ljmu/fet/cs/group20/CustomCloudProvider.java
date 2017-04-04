@@ -32,21 +32,15 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	public double getPerTickQuote(ResourceConstraints rc) {
 		this.rc = rc;
 		calculateNumOfVMs();
-		calculateProfit(costAnalyser);
 		
 		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
 		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
 		double totalPrice; //total price is what we are charging the customer.
 		
-		totalPrice = basePrice * coreNum * coreClock;
+		totalPrice = basePrice * coreNum * coreClock * vmCount;
 		
-		//If we have a profit charge normal price but if we dont then charge customer 50% more.
-		if(this.profit>0){
-			totalPrice = basePrice * coreNum * coreClock;
-			return (getDiscountAvailable(vmCount) * totalPrice);
-		}else{
-			return (1.5 * getDiscountAvailable(vmCount) * totalPrice);
-		}
+		return (totalPrice * getDiscountAvailable(vmCount));
+		
 	}
 	
 	@Override //Method for changing capacity, will automatically replace lost VMs with new ones.
@@ -76,11 +70,6 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		if(this.profit<0){
 			this.adjustedBasePrice = 2 * this.basePrice;
 		}
-	}
-	
-	//Calculate total profit -> (Total earning - total cost). 
-	public void calculateProfit(CostAnalyserandPricer costAnalyser){
-		this.profit = costAnalyser.getTotalEarnings() - costAnalyser.getTotalCosts();
 	}
 	
 	//Method to calculate number of Physical Machine.
