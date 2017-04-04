@@ -43,7 +43,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		double quadCoreVMPrice = basePrice * 2;
 		double totalPrice; //total price is what we are charging the customer.
 		
-		for(PhysicalMachine pM : customProvider.machines){
+		for(@SuppressWarnings("unused") PhysicalMachine pM : customProvider.machines){
 			if(rc.getRequiredCPUs() == 1){
 				this.singleCoreVmNum++;
 			}
