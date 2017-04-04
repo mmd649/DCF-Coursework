@@ -21,8 +21,11 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	
 	private final double basePrice = 0.0005;
 	
-	private int vmCount=0;
-	private int pmCount=0;
+	private int vmCount = 0;
+	private int pmCount = 0;
+	private int singleCoreVmNum = 0;
+	private int dualCoreVmNum = 0;
+	private int quadCoreVmNum = 0;
 	
 	private double adjustedBasePrice = 0;
 	private double totalPrice;
@@ -33,11 +36,26 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		this.rc = rc;
 		calculateNumOfVMs();
 		
-		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
-		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
+//		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
+//		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
+		double singleCoreVMPrice = basePrice;
+		double dualCoreVMPrice = basePrice * 1.5;
+		double quadCoreVMPrice = basePrice * 2;
 		double totalPrice; //total price is what we are charging the customer.
 		
-		totalPrice = basePrice * coreNum * coreClock * vmCount;
+		for(PhysicalMachine pM : customProvider.machines){
+			if(rc.getRequiredCPUs() == 1){
+				this.singleCoreVmNum++;
+			}
+			if(rc.getRequiredCPUs() == 2 ){
+				this.dualCoreVmNum++;
+			}
+			else{
+				this.quadCoreVmNum++;
+			}
+		}
+		
+		totalPrice = (singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice);
 		
 		return (totalPrice * getDiscountAvailable(vmCount));
 		
