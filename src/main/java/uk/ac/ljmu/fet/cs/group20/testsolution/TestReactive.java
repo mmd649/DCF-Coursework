@@ -1,4 +1,4 @@
-package uk.ac.ljmu.fet.cs.group20.tests;
+package uk.ac.ljmu.fet.cs.group20.testsolution;
 
 import java.util.List;
 

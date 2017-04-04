@@ -36,22 +36,23 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		this.rc = rc;
 		calculateNumOfVMs();
 		
-//		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
-//		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
+		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
+		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
 		double singleCoreVMPrice = basePrice;
 		double dualCoreVMPrice = basePrice * 1.5;
 		double quadCoreVMPrice = basePrice * 2;
 		double totalPrice; //total price is what we are charging the customer.
 		
+		//Loop to sort vms together. 3 groups which are -  single core VMs, dual core VMs and quadcore VMs 
 		for(@SuppressWarnings("unused") PhysicalMachine pM : customProvider.machines){
 			if(rc.getRequiredCPUs() == 1){
 				this.singleCoreVmNum++;
 			}
-			if(rc.getRequiredCPUs() == 2 ){
+			else if(rc.getRequiredCPUs() == 2 ){
 				this.dualCoreVmNum++;
 			}
 			else{
-				this.quadCoreVmNum++;
+				this.quadCoreVmNum++;//Although this is called quadcore, it also include Vms with more than 4 cores.
 			}
 		}
 		
