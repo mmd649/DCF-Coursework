@@ -142,6 +142,10 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		if(vmCount >= 40 && vmCount < 50){
 			return 0.9;
 		}
+		//If 30 - 39 VMs has been sold, give 5% discount.
+		if(vmCount >= 30 && vmCount < 40){
+			return 0.95;
+		}
 		//No discount.
 		return 1;
 	}
