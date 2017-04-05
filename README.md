@@ -9,6 +9,7 @@ Provider examples have been added to test the Custom Cloud Provider against; the
 
 ### Current Test Cases
 
+* src/main/java/uk/ac/ljmu/fet/cs/group20/tests/  [OurTestCaseForPricing.java](https://bitbucket.org/group20-/dcf-coursework/src/ea1b8137d303050a0ce371bcf6587b3f00d6bf36/src/main/java/uk/ac/ljmu/fet/cs/group20/tests/OurTestCaseForPricing.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/tests/  [TestForLessReliableMachines.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/tests/TestForLessReliableMachines.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/tests/  [TestForLoadDependentPrice.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/tests/TestForLoadDependentPrice.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/tests/  [TestForProviderReduction.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/tests/TestForProviderReduction.java?at=master&fileviewer=file-view-default)
@@ -20,6 +21,7 @@ Provider examples have been added to test the Custom Cloud Provider against; the
 * src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/  [LoadDependentProvider.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/LoadDependentProvider.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/  [MyFirstProvider.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/MyFirstProvider.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/  [MyLessReliableProvider.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/MyLessReliableProvider.java?at=master&fileviewer=file-view-default)
+*  src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/ [PMCreator.java](https://bitbucket.org/group20-/dcf-coursework/src/ea1b8137d303050a0ce371bcf6587b3f00d6bf36/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/PMCreator.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/  [MyRCAwareProvider.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/MyRCAwareProvider.java?at=master&fileviewer=file-view-default)
 
 #### Remark
