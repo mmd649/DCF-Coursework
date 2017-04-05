@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.RandomUtils;
 
+import hu.mta.sztaki.lpds.cloud.simulator.DeferredEvent;
+import hu.mta.sztaki.lpds.cloud.simulator.energy.MonitorConsumption;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.IaaSService;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.PhysicalMachine;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.VMManager.CapacityChangeEvent;
@@ -18,6 +20,7 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private IaaSService customProvider;
 	private CostAnalyserandPricer costAnalyser;
 	private ResourceConstraints rc;
+	private MonitorConsumption[] Monitors;
 	
 	private final double basePrice = 0.0005;
 	
@@ -28,7 +31,6 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private int quadCoreVmNum = 0;
 	
 	private double adjustedBasePrice = 0; //[Not in use at the moment]
-	private double profit=0;
 	
 	@Override
 	public double getPerTickQuote(ResourceConstraints rc) {
@@ -40,12 +42,18 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		double singleCoreVMPrice = basePrice;
 		double dualCoreVMPrice = basePrice * 1.5;
 		double quadCoreVMPrice = basePrice * 2;
-		double totalPrice; //total price is what we are charging the customer.
+		double totalPrice = (((singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice)))/(coreClock*coreNum);
 		
-		totalPrice = (singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice);
-		
-		return (totalPrice * getDiscountAvailable(vmCount));
-		
+		if (Monitors == null || !Monitors[0].isSubscribed()) {
+			return ((basePrice * totalPrice * getDiscountAvailable(vmCount)));
+		}else{
+			double currentTotalConsumption = 0;
+			for (MonitorConsumption mon : Monitors) {
+				currentTotalConsumption += mon.getSubHourProcessing();
+			}
+			double discount = currentTotalConsumption / rc.getTotalProcessingPower();
+			return ((basePrice * totalPrice * getDiscountAvailable(vmCount) * discount));
+		}
 	}
 	
 	@Override //Method for changing capacity, will automatically replace lost VMs with new ones.
@@ -65,16 +73,30 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		}
 	}
 	
+	public void LowerPrice4LowerLoad(){
+		new DeferredEvent(2 * 24 * 60 * 60 * 1000 + 1) {
+			@Override
+			protected void eventAction() {
+				Monitors = new MonitorConsumption[customProvider.machines.size()];
+				int i = 0;
+				for (PhysicalMachine pm : customProvider.machines) {
+					Monitors[i++] = new MonitorConsumption(pm, 1000);
+				}
+				new DeferredEvent(102 * 10 * 60 * 1000l) {
+					@Override
+					protected void eventAction() {
+						for (MonitorConsumption mon : Monitors) {
+							mon.cancelMonitoring();
+						}
+					}
+				};
+			}
+		};
+	}
+	
 	//Method to set cost analyser.
 	public void setCostAnalyser(CostAnalyserandPricer costAnalyser){
 		this.costAnalyser = costAnalyser;
-	}
-	
-	//Will automatically adjust base price depending on how good/bad the priovider is doing. [Currently not in use]
-	public void calculateAdjustedBasePrice(CostAnalyserandPricer costAnalyser){
-		if(this.profit<0){
-			this.adjustedBasePrice = 2 * this.basePrice;
-		}
 	}
 	
 	//Method to calculate number of Physical Machine.
@@ -128,5 +150,6 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		this.customProvider = iaas;
 		iaas.subscribeToCapacityChanges(this);
 		((IaaSForwarder) customProvider).setQuoteProvider(this);
+		LowerPrice4LowerLoad();
 	}
 }
