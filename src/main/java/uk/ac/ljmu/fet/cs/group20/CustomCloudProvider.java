@@ -73,7 +73,9 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 			}
 		}
 	}
-	
+	public void reducedEnergyChange(List<PhysicalMachine> affectedCapacity)  { // method for checking the machine loads the lowest energy machine.
+		
+	}
 	public void LowerPrice4LowerLoad(){
 		new DeferredEvent(2 * 24 * 60 * 60 * 1000 + 1) {
 			@Override
