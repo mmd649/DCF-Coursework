@@ -1,7 +1,13 @@
 # DCF-Coursework
 A few test classes along with the custom provider its self
 
-## Current Test Cases
+## Competitive providers
+
+Provider examples have been added to test the Custom Cloud Provider against; these can be found in:
+
+* src/main/java/uk/ac/ljmu/fet/cs/  [CloudProviderCompetitors](https://bitbucket.org/group20-/dcf-coursework/src/78b6a786cadd2494a4019e2204cc9bbb3c2f5ef8/src/main/java/uk/ac/ljmu/fet/cs/CloudProviderCompetitors/?at=master)
+
+### Current Test Cases
 
 * src/main/java/uk/ac/ljmu/fet/cs/group20/tests/  [TestForLessReliableMachines.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/tests/TestForLessReliableMachines.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/tests/  [TestForLoadDependentPrice.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/tests/TestForLoadDependentPrice.java?at=master&fileviewer=file-view-default)
