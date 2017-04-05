@@ -25,10 +25,12 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private final double basePrice = 0.0005;
 	
 	private int vmCount = 0;
+	@SuppressWarnings("unused")
 	private int pmCount = 0;
 	private int singleCoreVmNum = 0;
 	private int dualCoreVmNum = 0;
 	private int quadCoreVmNum = 0;
+	private double currentTotalConsumption = 0;
 	
 	private double adjustedBasePrice = 0; //[Not in use at the moment]
 	
@@ -47,12 +49,11 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		if (Monitors == null || !Monitors[0].isSubscribed()) {
 			return ((basePrice * totalPrice * getDiscountAvailable(vmCount)));
 		}else{
-			double currentTotalConsumption = 0;
 			for (MonitorConsumption mon : Monitors) {
 				currentTotalConsumption += mon.getSubHourProcessing();
 			}
-			double discount = currentTotalConsumption / rc.getTotalProcessingPower();
-			return ((basePrice * totalPrice * getDiscountAvailable(vmCount) * discount));
+			this.adjustedBasePrice = (currentTotalConsumption / rc.getTotalProcessingPower())*basePrice;
+			return ((adjustedBasePrice * totalPrice * getDiscountAvailable(vmCount)));
 		}
 	}
 	
