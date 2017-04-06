@@ -24,6 +24,13 @@ Provider examples have been added to test the Custom Cloud Provider against; the
 *  src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/ [PMCreator.java](https://bitbucket.org/group20-/dcf-coursework/src/ea1b8137d303050a0ce371bcf6587b3f00d6bf36/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/PMCreator.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/  [MyRCAwareProvider.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/MyRCAwareProvider.java?at=master&fileviewer=file-view-default)
 
+### The Scrum Team
+
+Conor Cridge - Product owner
+Aidan Armstrong - Development tester 
+Mark Medrano - Head developer
+Sean Hall - Scrum master
+
 ### UML Diagrams
 
 Diagrams have been created and uploaded to a separate repository, which can be found in:
