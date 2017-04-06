@@ -27,8 +27,11 @@ Provider examples have been added to test the Custom Cloud Provider against; the
 ### The Scrum Team
 
 Conor Cridge - Product owner
+
 Aidan Armstrong - Development tester 
+
 Mark Medrano - Head developer
+
 Sean Hall - Scrum master
 
 ### UML Diagrams
