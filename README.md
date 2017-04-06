@@ -24,6 +24,12 @@ Provider examples have been added to test the Custom Cloud Provider against; the
 *  src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/ [PMCreator.java](https://bitbucket.org/group20-/dcf-coursework/src/ea1b8137d303050a0ce371bcf6587b3f00d6bf36/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/PMCreator.java?at=master&fileviewer=file-view-default)
 * src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/  [MyRCAwareProvider.java](https://bitbucket.org/group20-/dcf-coursework/src/b9587bb223f754b6dff53cee2747b18f1cca8569/src/main/java/uk/ac/ljmu/fet/cs/group20/testsolution/MyRCAwareProvider.java?at=master&fileviewer=file-view-default)
 
+### UML Diagrams
+
+Diagrams have been created and uploaded to a separate repository, which can be found in:
+
+* Group 20 / Coursework / [DFC-Model](https://bitbucket.org/group20-/dcf-model/overview)
+
 #### Remark
 The solutions above are kept to be as simplistic as possible in order to allow easy understanding of the mechanics in place. As a result, some of the solutions do not offer 100% success rate in the test runs. Any problems email Mark, he's the only one who seems to know what he's doing. ;-D
 
