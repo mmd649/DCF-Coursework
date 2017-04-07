@@ -10,8 +10,13 @@ import hu.unimiskolc.iit.distsys.ExercisesBase;
 import hu.unimiskolc.iit.distsys.PMPriceRecord;
 import hu.unimiskolc.iit.distsys.forwarders.PMForwarder;
 
+/**
+ * this is a code provided by gabor which looks at the how we can save money by creating a lower energy machine. 
+ * @author Mark
+ *
+ */
 public class PMCreator {
-
+	
 	public static PMForwarder createLowerEnergyMachine(PhysicalMachine energyReference) throws SecurityException, InstantiationException, IllegalAccessException, NoSuchFieldException {
 		double referencePowerDraw=((PMForwarder)energyReference).getMaxConsumption();
 		PMForwarder pmNew;

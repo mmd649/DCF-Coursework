@@ -14,7 +14,11 @@ public class MyFirstProvider implements CloudProvider {
 		
 		return 0.000002;
 	}
-
+	
+	/**
+	 * The test case assumes that 15 of the 30 physical machine has been sold.
+	 * If a physical machine has been sold, it is then de-registered.
+	 */
 	@Override
 	public void setIaaSService(IaaSService iaas){
 		

@@ -10,7 +10,6 @@ import hu.mta.sztaki.lpds.cloud.simulator.iaas.IaaSService;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.PhysicalMachine;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.VMManager.CapacityChangeEvent;
 import hu.mta.sztaki.lpds.cloud.simulator.iaas.constraints.ResourceConstraints;
-import hu.unimiskolc.iit.distsys.CostAnalyserandPricer;
 import hu.unimiskolc.iit.distsys.ExercisesBase;
 import hu.unimiskolc.iit.distsys.forwarders.IaaSForwarder;
 import hu.unimiskolc.iit.distsys.interfaces.CloudProvider;
@@ -18,7 +17,6 @@ import hu.unimiskolc.iit.distsys.interfaces.CloudProvider;
 public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<PhysicalMachine>{
 	
 	private IaaSService customProvider;
-	private CostAnalyserandPricer costAnalyser;
 	private ResourceConstraints rc;
 	private MonitorConsumption[] Monitors;
 	
@@ -32,32 +30,41 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 	private int quadCoreVmNum = 0;
 	private double currentTotalConsumption = 0;
 	
-	private double adjustedBasePrice = 0; //[Not in use at the moment]
+	private double adjustedBasePrice = 0;
 	
+	
+	/**
+	 * The pricing strategy of this cloud provider looks at how many cpu cores the vm has. The calculations of vm cores can be found in the calculateNumOfVMs() method at line 109
+	 * Once the vms with different core numbers had been sorted out, the base price for each is then work out. As you can see below, a dual core vms is 50% more expensive than a single core.
+	 * The total price is then work out with totalPrice = (singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice) / cpu cores * cpu clock
+	 * Further discount can be obtained which looks at number of vms sold and gives better discount depending on how many vms has been purchased.
+	 * the adjusted baseprice is used when partial cpu load is used and not the whole processing power.
+	 */
 	@Override
 	public double getPerTickQuote(ResourceConstraints rc) {
 		this.rc = rc;
 		calculateNumOfVMs();
-		
-		double coreNum = rc.getRequiredCPUs(); //Number of CPU cores
-		double coreClock = rc.getRequiredProcessingPower(); //CPU frequency
+		calculateNumOfPMs();
+	
 		double singleCoreVMPrice = basePrice;
 		double dualCoreVMPrice = basePrice * 1.5;
 		double quadCoreVMPrice = basePrice * 2;
-		double totalPrice = (((singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice)))/(coreClock*coreNum);
+		double totalPrice = (((singleCoreVmNum * singleCoreVMPrice)+(dualCoreVmNum * dualCoreVMPrice)+(quadCoreVmNum * quadCoreVMPrice)))/(rc.getTotalProcessingPower());
 		
 		if (Monitors == null || !Monitors[0].isSubscribed()) {
 			return ((basePrice * totalPrice * getDiscountAvailable(vmCount)));
-		}else{
-			for (MonitorConsumption mon : Monitors) {
-				currentTotalConsumption += mon.getSubHourProcessing();
 			}
+		for (MonitorConsumption mon : Monitors) {
+			currentTotalConsumption += mon.getSubHourProcessing();
+		}
 			this.adjustedBasePrice = (currentTotalConsumption / rc.getTotalProcessingPower())*basePrice;
 			return ((adjustedBasePrice * totalPrice * getDiscountAvailable(vmCount)));
-		}
 	}
 	
-	@Override //Method for changing capacity, will automatically replace lost VMs with new ones.
+	/**
+	 * This method is for capacity change. It will replace lost physical machines.  
+	 */
+	@Override
 	public void capacityChanged(ResourceConstraints newCapacity, List<PhysicalMachine> affectedCapacity){
 	
 		final boolean newRegistration = customProvider.isRegisteredHost(affectedCapacity.get(0));
@@ -73,10 +80,15 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 			}
 		}
 	}
+	
 	public void reducedEnergyChange(List<PhysicalMachine> affectedCapacity)  { // method for checking the machine loads the lowest energy machine.
 		
 	}
-	public void LowerPrice4LowerLoad(){
+	
+	/**
+	 * This is the method use for monitoring ongoing processes. It links a monitor to a virtual machine and observes the processing done.
+	 */
+	public void monitorVMs(){
 		new DeferredEvent(2 * 24 * 60 * 60 * 1000 + 1) {
 			@Override
 			protected void eventAction() {
@@ -97,19 +109,18 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 		};
 	}
 	
-	//Method to set cost analyser.
-	public void setCostAnalyser(CostAnalyserandPricer costAnalyser){
-		this.costAnalyser = costAnalyser;
-	}
-	
-	//Method to calculate number of Physical Machine.
-	public void calculateNumOfPms(){
+	/**
+	 * Simple method which determines the number of physical machine.
+	 */
+	public void calculateNumOfPMs(){
 		for(@SuppressWarnings("unused") PhysicalMachine pm : customProvider.machines){
 			pmCount++;
 		}
 	}
 	
-	//Method to calculate number of Virtual Machines.
+	/**
+	 * This is the method which calculated the number of vms and also sorts them out according to the number of cores they have. This is used when calculating the totalPrice.
+	 */
 	public void calculateNumOfVMs(){
 		for(PhysicalMachine pM: customProvider.machines){
 			this.vmCount += pM.numofCurrentVMs();
@@ -124,39 +135,50 @@ public class CustomCloudProvider implements CloudProvider, CapacityChangeEvent<P
 			else{
 				this.quadCoreVmNum++;//Although this is called quadcore, it also include Vms with more than 4 cores.
 			}
+			
+			
 		}
 	}
 	
+	
+	/**
+	 * This method is used to calculate the availanble discount that customer can get depending on how many vms are purchased. 
+	 * @param vmCount
+	 * @return
+	 */
 	public double getDiscountAvailable(int vmCount){
 		//If 70+ VMs has been sold, give 25% discount.
-		if(vmCount >= 70){
+		if(vmCount >= 25){
 			return 0.75;
 		}
 		//If 60 - 69 VMs has been sold, give 20% discount.
-		if(vmCount >= 60 && vmCount < 70){
+		if(vmCount >= 20 && vmCount < 25){
 			return 0.8;
 		}
 		//If 50 - 59 VMs has been sold, give 15% discount.
-		if(vmCount >= 50 && vmCount < 60){
+		if(vmCount >= 15 && vmCount < 20){
 			return 0.85;
 		}
 		//If 40 - 49 VMs has been sold, give 10% discount.
-		if(vmCount >= 40 && vmCount < 50){
+		if(vmCount >= 10 && vmCount < 15){
 			return 0.9;
 		}
-		//If 30 - 39 VMs has been sold, give 5% discount.
-		if(vmCount >= 30 && vmCount < 40){
+		//If 5 -9 VMs has been sold, give 5% discount.
+		if(vmCount >= 5 && vmCount < 10){
 			return 0.95;
 		}
 		//No discount.
 		return 1;
 	}
 	
+	/**
+	 * The method which we set the IaaSService as the name suggest.
+	 */
 	@Override
 	public void setIaaSService(IaaSService iaas){
 		this.customProvider = iaas;
 		iaas.subscribeToCapacityChanges(this);
 		((IaaSForwarder) customProvider).setQuoteProvider(this);
-		LowerPrice4LowerLoad();
+		monitorVMs();
 	}
 }

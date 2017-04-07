@@ -12,25 +12,30 @@ public class LoadDependentProvider implements CloudProvider {
 	
 	IaaSService iaas;
 	MonitorConsumption[] Monitors;
-
+	
+	/**
+	 * I didn't manage to complete this one. This is a copy of Gabor's code.
+	 */
 	@Override
 	public double getPerTickQuote(ResourceConstraints rc) {
 		double basePrice = 0.00005;
 		double totalPrice = 0;
 		
-		//If no monitor is running or subscribe , we just return base price.
 		if (Monitors == null || !Monitors[0].isSubscribed()) {
 			return basePrice;
 		}
 		double currentTotalConsumption = 0;
-		//Loop which goes through all active monitors and records all process done in an hour.
+		
 		for (MonitorConsumption mon : Monitors) {
 			currentTotalConsumption += mon.getSubHourProcessing();
 		}
 		
 		return totalPrice*(currentTotalConsumption/rc.getTotalProcessingPower());
 	}
-
+	
+	/**
+	 * This is a copy of Gabor's code.
+	 */
 	@Override
 	public void setIaaSService(IaaSService iaas) {
 		this.iaas = iaas;
